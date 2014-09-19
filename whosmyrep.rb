@@ -1,9 +1,6 @@
-require 'tweetstream'
-require 'pry'
-require 'oj'
 require 'bundler/setup'
-require 'pry'
-require 'pg'
+require 'dotenv'
+Dotenv.load
 
 Bundler.require(:default)
 
@@ -17,13 +14,25 @@ DB = PG.connect({:dbname => 'whosmyrep_console_development'})
 			"fl" => "Florida Information",
 			"tn" => "Tennessee Information",
 			"mi" => "Michigan Information",
-			"al" => "Alabama Information"}
+			"al" => "Alabama Information",
+			"id" => "Idaho Information",
+			"ny" => "New York Information",
+			"tx" => "Texas Information",
+			"co" => "Colorado Information",
+			"ga" => "Georgia Information ",
+			"ms" => "Mississippi Information",
+			"wa" => "Washington Information"}
+
+	CONSUMER_KEY       = ENV['twitter_consumer_key']
+	CONSUMER_SECRET    = ENV['twitter_consumer_secret']
+	OAUTH_TOKEN        = ENV['twitter_oauth_token']
+	OAUTH_TOKEN_SECRET = ENV['twitter_oauth_token_secret']
 
 	TweetStream.configure do |config|
-	  config.consumer_key       = 'LDNk55uXbOoG1f4ZCvFspZW9l'
-	  config.consumer_secret    = 'xlpFEIl8SkFgViLDwQe2b3yJ7clLCBsgNaxDOp1Q7wmpQuknqC'
-	  config.oauth_token        = '150020012-5V4DUTwu9xJ6aF3ZY6mK0MdHLVMNKnSuXlRVA1IA'
-	  config.oauth_token_secret = 'w0x56NiADq4fTuVtG8nsFYKL1BIwxUtx8x0ce9zO4KG9L'
+	  config.consumer_key       = CONSUMER_KEY       
+	  config.consumer_secret    = CONSUMER_SECRET    
+	  config.oauth_token        = OAUTH_TOKEN        
+	  config.oauth_token_secret = OAUTH_TOKEN_SECRET 
 	  config.auth_method        = :oauth
 	end
 
@@ -33,6 +42,7 @@ def main
 	@client.on_error do |message|
 	  puts "ERROR: #{message}"
 	end
+
 	
 	puts "enter term"
 	term = gets.chomp.to_s
@@ -44,11 +54,13 @@ def track (term)
 
 	@client.track(term) do |status|
 
+		puts status.user.screen_name + " - " + status.text
+
 		@twitter = Twitter::REST::Client.new do |config|
-		  config.consumer_key        = 'LDNk55uXbOoG1f4ZCvFspZW9l'
-		  config.consumer_secret     = 'xlpFEIl8SkFgViLDwQe2b3yJ7clLCBsgNaxDOp1Q7wmpQuknqC'
-		  config.access_token        = '150020012-5V4DUTwu9xJ6aF3ZY6mK0MdHLVMNKnSuXlRVA1IA'
-		  config.access_token_secret = 'w0x56NiADq4fTuVtG8nsFYKL1BIwxUtx8x0ce9zO4KG9L'
+		  config.consumer_key        = ENV['twitter_consumer_key']
+		  config.consumer_secret     = ENV['twitter_consumer_secret']
+		  config.access_token        = ENV['twitter_oauth_token']
+		  config.access_token_secret = ENV['twitter_oauth_token_secret']
 		end
 
 		@status = status
@@ -62,11 +74,14 @@ def track (term)
 	            	
 	            	new_tweet = @twitter.update(response, :in_reply_to_status_id => status.id)
 	            	
+	            	puts new_tweet.text 
+	            	puts "@" + (Time.now).to_s + "\n" + "\n"
+
 	            	add_reply(new_tweet.id, response.to_s)
 	            	
 	            end
 	        end
-    	end
+       	end
 	end
 end
 
