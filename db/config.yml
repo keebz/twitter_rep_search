@@ -1,0 +1,7 @@
+development:
+  adapter: postgresql
+  database: whosmyrep_console_development
+
+test:
+  adapter: postgresql
+  database: whosmyrep_console_test

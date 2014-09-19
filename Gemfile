@@ -1,0 +1,10 @@
+source 'https://rubygems.org'
+
+gem 'activerecord'
+gem 'pg'
+gem 'rake'
+gem 'active_record_migrations'
+gem 'pry'
+gem 'tweetstream'
+gem 'twitter'
+gem 'oj'
