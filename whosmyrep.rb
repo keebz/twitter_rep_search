@@ -9,24 +9,12 @@ ActiveRecord::Base.establish_connection(YAML::load(File.open('./db/config.yml'))
 
 DB = PG.connect({:dbname => 'whosmyrep_console_development'})
 
-@states = { "or" => "Oregon Information", 
-			"ca" => "California Information",
-			"fl" => "Florida Information",
-			"tn" => "Tennessee Information",
-			"mi" => "Michigan Information",
-			"al" => "Alabama Information",
-			"id" => "Idaho Information",
-			"ny" => "New York Information",
-			"tx" => "Texas Information",
-			"co" => "Colorado Information",
-			"ga" => "Georgia Information ",
-			"ms" => "Mississippi Information",
-			"wa" => "Washington Information"}
-
 	CONSUMER_KEY       = ENV['twitter_consumer_key']
 	CONSUMER_SECRET    = ENV['twitter_consumer_secret']
 	OAUTH_TOKEN        = ENV['twitter_oauth_token']
 	OAUTH_TOKEN_SECRET = ENV['twitter_oauth_token_secret']
+	GOOGLE_API_KEY	   = ENV['google_api_key']
+
 
 	TweetStream.configure do |config|
 	  config.consumer_key       = CONSUMER_KEY       
@@ -43,7 +31,6 @@ def main
 	  puts "ERROR: #{message}"
 	end
 
-	
 	puts "enter term"
 	term = gets.chomp.to_s
 
@@ -66,9 +53,12 @@ def track (term)
 		@status = status
 
 		if @status.hashtags != nil
+
 		  	@status.hashtags.each do |hash|
-	            if @states.include?(hash.attrs[:text].downcase)
-	            	response = "@#{@status.user.screen_name}" + " " + @states[hash.attrs[:text].downcase]
+		  		rep_search(hash.attrs[:text].downcase)
+
+	            
+	            	response = "@#{@status.user.screen_name}" + " " + @rep1_info + " " + @rep2_info
 	            	
 	            	scrub_reply(response)
 	            	
@@ -79,7 +69,7 @@ def track (term)
 
 	            	add_reply(new_tweet.id, response.to_s)
 	            	
-	            end
+	           
 	        end
        	end
 	end
@@ -95,6 +85,26 @@ def scrub_reply (response)
 		@twitter.destroy_status(duplicate.reply_id.to_i)
 		duplicate.destroy 
 	end
+end
+
+def rep_search(location)
+	@civicaide = CivicAide::Client.new(GOOGLE_API_KEY)
+	build_rep(@civicaide.representatives.at(location))
+end
+
+def build_rep(rep_hash)
+	binding.pry
+
+	name1 = rep_hash["officials"]["p3"]["name"]
+	# emails1 = rep_hash["officials"]["p3"]["emails"].join("")
+	# phones1 = rep_hash["officials"]["p3"]["phones"].join("")
+
+	name2 = rep_hash["officials"]["p4"]["name"]
+	# emails2 = rep_hash["officials"]["p4"]["emails"].join("")
+	# phones2 = rep_hash["officials"]["p4"]["phones"].join("")
+
+	@rep1_info = name1 
+	@rep2_info = name2 
 end
 
 main
