@@ -58,7 +58,7 @@ def track (term)
 		  		rep_search(hash.attrs[:text].downcase)
 
 	            
-	            	response = "@#{@status.user.screen_name}" + " " + @rep1_info + " " + @rep2_info
+	            	response = "@#{@status.user.screen_name}" + "Senators: " + @rep1_info + " & " + @rep2_info
 	            	
 	            	scrub_reply(response)
 	            	
@@ -93,18 +93,43 @@ def rep_search(location)
 end
 
 def build_rep(rep_hash)
-	binding.pry
+	names = []
+	parties = []
+	phones = []
+	emails = []
+	rep_ids = []
 
-	name1 = rep_hash["officials"]["p3"]["name"]
-	# emails1 = rep_hash["officials"]["p3"]["emails"].join("")
-	# phones1 = rep_hash["officials"]["p3"]["phones"].join("")
+	rep_hash["offices"].each do |office_tag|
+	    office_tag.each do |office|  
+	        if office["name"] == "United States Senate"    
+	           office["official_ids"].each do |id|
+	           rep_ids << id
+		       end  
+		    end  
+	    end  
+	end  
 
-	name2 = rep_hash["officials"]["p4"]["name"]
-	# emails2 = rep_hash["officials"]["p4"]["emails"].join("")
-	# phones2 = rep_hash["officials"]["p4"]["phones"].join("")
+	rep_ids.each do |id|
+	  id.downcase!  
+	  names << rep_hash["officials"][id]["name"]
+	  
+	  if rep_hash["officials"][id]["party"] == "Democratic"
+	  	parties << "-D "
+	  elsif rep_hash["officials"][id]["party"] == "Republican"
+	  	parties << "-R "
+	  else
+	  	parties << "-I "
+	  end
 
-	@rep1_info = name1 
-	@rep2_info = name2 
+	  emails << rep_hash["officials"][id]["emails"].first
+
+	  phones << rep_hash["officials"][id]["emails"].first
+  	    	    
+	end 
+
+	@rep1_info = names[0] + " " + parties[0] + " " + emails[0] + " " + phones[0]
+
+	@rep2_info = names[1] + " " + parties[1] + " " + emails[1] + " " + phones[1]
 end
 
 main
