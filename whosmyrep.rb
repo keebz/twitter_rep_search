@@ -34,7 +34,8 @@ def main
 	puts "enter term"
 	term = gets.chomp.to_s
 
-	track(term)
+	# track(term)
+	rep_search(term)
 end
 
 def track (term)
@@ -58,16 +59,27 @@ def track (term)
 		  		rep_search(hash.attrs[:text].downcase)
 
 	            
-	            	response = "@#{@status.user.screen_name}" + "Senators: " + @rep1_info + " & " + @rep2_info
+	            	response1 = "@#{@status.user.screen_name}" + " Sen. " + @rep1_info
 	            	
-	            	scrub_reply(response)
-	            	
-	            	new_tweet = @twitter.update(response, :in_reply_to_status_id => status.id)
-	            	
-	            	puts new_tweet.text 
-	            	puts "@" + (Time.now).to_s + "\n" + "\n"
+	            	scrub_reply(response1)
 
-	            	add_reply(new_tweet.id, response.to_s)
+	            	response2 = "@#{@status.user.screen_name}" + " Sen. " + @rep2_info
+	            	
+	            	scrub_reply(response2)
+	            	
+	            	new_tweet1 = @twitter.update(response1, :in_reply_to_status_id => status.id)
+
+	            	new_tweet2 = @twitter.update(response2, :in_reply_to_status_id => status.id)
+	            	
+	            	puts new_tweet1.text + "\n\n"
+
+	            	puts new_tweet2.text + "\n\n"
+
+	            	puts "@" + (Time.now).to_s + "\n\n"
+
+	            	add_reply(new_tweet1.id, response1.to_s)
+					
+					add_reply(new_tweet2.id, response2.to_s)
 	            	
 	           
 	        end
@@ -97,6 +109,7 @@ def build_rep(rep_hash)
 	parties = []
 	phones = []
 	emails = []
+	twitters = []
 	rep_ids = []
 
 	rep_hash["offices"].each do |office_tag|
@@ -114,22 +127,39 @@ def build_rep(rep_hash)
 	  names << rep_hash["officials"][id]["name"]
 	  
 	  if rep_hash["officials"][id]["party"] == "Democratic"
-	  	parties << "-D "
+	  	parties << "D "
 	  elsif rep_hash["officials"][id]["party"] == "Republican"
-	  	parties << "-R "
+	  	parties << "R "
 	  else
-	  	parties << "-I "
+	  	parties << "I "
 	  end
 
-	  emails << rep_hash["officials"][id]["emails"].first
+	  if rep_hash["officials"][id]["emails"] != nil
+	  	emails << rep_hash["officials"][id]["emails"].first
+	  else
+	  	emails << rep_hash["officials"][id]["urls"].first
+	  end
 
-	  phones << rep_hash["officials"][id]["emails"].first
+	  if rep_hash["officials"][id]["phones"] != nil
+	  	phones << rep_hash["officials"][id]["phones"].first
+	  else
+	  	phones << rep_hash["officials"][id]["urls"].first
+	  end
+
+	  if rep_hash["officials"][id]["channels"].find { |t| t["type"] == "Twitter"} != nil
+		
+		twitters << "@" + rep_hash["officials"][id]["channels"].find { |t| t["type"] == "Twitter"} ["id"]
+	  
+	  else
+	  	twitters << "#VOTE" 
+	  end
   	    	    
 	end 
 
-	@rep1_info = names[0] + " " + parties[0] + " " + emails[0] + " " + phones[0]
+	@rep1_info = names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " " + twitters[0]
 
-	@rep2_info = names[1] + " " + parties[1] + " " + emails[1] + " " + phones[1]
+	@rep2_info = names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " " + twitters[1]
+	binding.pry 
 end
 
 main
