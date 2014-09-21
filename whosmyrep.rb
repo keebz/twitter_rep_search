@@ -1,5 +1,6 @@
 require 'bundler/setup'
 require 'dotenv'
+
 Dotenv.load
 
 Bundler.require(:default)
@@ -31,11 +32,8 @@ def main
 	  puts "ERROR: #{message}"
 	end
 
-	puts "enter term"
-	term = gets.chomp.to_s
-
-	# track(term)
-	rep_search(term)
+	puts "Tracking..."
+	track('@whosmyrep')
 end
 
 def track (term)
@@ -54,35 +52,35 @@ def track (term)
 		@status = status
 
 		if @status.hashtags != nil
+			@keywords = []
 
 		  	@status.hashtags.each do |hash|
-		  		rep_search(hash.attrs[:text].downcase)
-
-	            
-	            	response1 = "@#{@status.user.screen_name}" + " Sen. " + @rep1_info
-	            	
-	            	scrub_reply(response1)
-
-	            	response2 = "@#{@status.user.screen_name}" + " Sen. " + @rep2_info
-	            	
-	            	scrub_reply(response2)
-	            	
-	            	new_tweet1 = @twitter.update(response1, :in_reply_to_status_id => status.id)
-
-	            	new_tweet2 = @twitter.update(response2, :in_reply_to_status_id => status.id)
-	            	
-	            	puts new_tweet1.text + "\n\n"
-
-	            	puts new_tweet2.text + "\n\n"
-
-	            	puts "@" + (Time.now).to_s + "\n\n"
-
-	            	add_reply(new_tweet1.id, response1.to_s)
-					
-					add_reply(new_tweet2.id, response2.to_s)
-	            	
-	           
+		  		@keywords << hash.attrs[:text].downcase 
 	        end
+
+	        rep_search(@keywords)
+        	
+        	response1 = "@#{@status.user.screen_name}" + " " + @rep1_info
+        	
+        	scrub_reply(response1)
+
+        	response2 = "@#{@status.user.screen_name}" + " " +@rep2_info
+        	
+        	scrub_reply(response2)
+        	
+        	new_tweet1 = @twitter.update(response1, :in_reply_to_status_id => status.id)
+
+        	new_tweet2 = @twitter.update(response2, :in_reply_to_status_id => status.id)
+        	
+        	puts new_tweet1.text + "\n\n"
+
+        	puts new_tweet2.text + "\n\n"
+
+        	puts "@" + (Time.now).to_s + "\n\n"
+
+        	add_reply(new_tweet1.id, response1.to_s)
+			
+			add_reply(new_tweet2.id, response2.to_s)           
        	end
 	end
 end
@@ -99,9 +97,17 @@ def scrub_reply (response)
 	end
 end
 
-def rep_search(location)
+def rep_search(keywords)
 	@civicaide = CivicAide::Client.new(GOOGLE_API_KEY)
-	build_rep(@civicaide.representatives.at(location))
+
+	keywords.each do |keyword|
+		begin
+			build_rep(@civicaide.representatives.at(keyword))
+			break
+		rescue
+			
+		end
+	end
 end
 
 def build_rep(rep_hash)
@@ -156,10 +162,10 @@ def build_rep(rep_hash)
   	    	    
 	end 
 
-	@rep1_info = names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " " + twitters[0]
+	@rep1_info = "Sen. " + names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " " + twitters[0]
 
-	@rep2_info = names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " " + twitters[1]
-	binding.pry 
+	@rep2_info = "Sen. " + names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " " + twitters[1]
+
 end
 
 main
