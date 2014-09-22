@@ -34,9 +34,9 @@ def main
 	  puts "ERROR: #{message}"
 	end
 
-	# puts "Tracking..."
-	# track('@whosmyrep')
-	rep_search(['AK'])
+	puts "Tracking...@whosmyrep"
+	track('@whosmyrep')
+	# rep_search(['AK'])
 	# donor_info('FL')
 end
 
@@ -177,7 +177,7 @@ def build_rep(rep_hash)
 	  end
   	    	    
 	end 
-binding.pry 
+
 	if ("@#{@status.user.screen_name}" + " " + "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + twitters[0] + " Funded By: " + @top_donors[0]).length <= 140
 
 		@rep1_info = "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + twitters[0] + " Funded By: " + @top_donors[0]
