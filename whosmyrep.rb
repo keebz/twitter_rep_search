@@ -180,14 +180,14 @@ def build_rep(rep_hash)
 
 	if ("@#{@status.user.screen_name}" + " " + "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + twitters[0] + " Funded By: " + @top_donors[0]).length <= 140
 
-		@rep1_info = "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + twitters[0] + " Funded By: " + @top_donors[0]
+		@rep1_info = "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " " + twitters[0] + " Funded By: " + @top_donors[0]
 	else
 		@rep1_info = "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " Funded By: " + @top_donors[0]
 	end
 
 	if ("@#{@status.user.screen_name}" + " " + "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + twitters[1] + " Funded By: " + @top_donors[1]).length <= 140
 
-		@rep2_info = "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + twitters[1] + " Funded By: " + @top_donors[1]
+		@rep2_info = "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " " + twitters[1] + " Funded By: " + @top_donors[1]
 	else
 		@rep2_info = "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " Funded By: " + @top_donors[1]
 	end
