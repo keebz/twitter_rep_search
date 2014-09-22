@@ -1,5 +1,7 @@
 require 'bundler/setup'
 require 'dotenv'
+require 'rest_client'
+require 'nokogiri'
 
 Dotenv.load
 
@@ -32,8 +34,10 @@ def main
 	  puts "ERROR: #{message}"
 	end
 
-	puts "Tracking..."
-	track('@whosmyrep')
+	# puts "Tracking..."
+	# track('@whosmyrep')
+	rep_search(['AK'])
+	# donor_info('FL')
 end
 
 def track (term)
@@ -57,6 +61,9 @@ def track (term)
 		  	@status.hashtags.each do |hash|
 		  		@keywords << hash.attrs[:text].downcase 
 	        end
+			
+			@rep1_info = "Nothing Found! Please use a hashtag followed by your state. Example: #OH or even #ohio."
+			@rep2_info = "Get out and #VOTE! Every election counts and counts on YOU!"
 
 	        rep_search(@keywords)
         	
@@ -111,12 +118,14 @@ def rep_search(keywords)
 end
 
 def build_rep(rep_hash)
-	names = []
+	@state = rep_hash["normalized_input"]["state"]
+	@names = []
 	parties = []
 	phones = []
 	emails = []
 	twitters = []
 	rep_ids = []
+	@top_donors = []
 
 	rep_hash["offices"].each do |office_tag|
 	    office_tag.each do |office|  
@@ -129,8 +138,15 @@ def build_rep(rep_hash)
 	end  
 
 	rep_ids.each do |id|
-	  id.downcase!  
-	  names << rep_hash["officials"][id]["name"]
+	  id.downcase! 
+
+	  rep_name = rep_hash["officials"][id]["name"]
+	  lastname = rep_name.split.last.upcase
+
+	  donor_info(@state, lastname)
+
+	  @names << rep_name
+		
 	  
 	  if rep_hash["officials"][id]["party"] == "Democratic"
 	  	parties << "D "
@@ -161,11 +177,43 @@ def build_rep(rep_hash)
 	  end
   	    	    
 	end 
+binding.pry 
+	if ("@#{@status.user.screen_name}" + " " + "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + twitters[0] + " Funded By: " + @top_donors[0]).length <= 140
 
-	@rep1_info = "Sen. " + names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " " + twitters[0]
+		@rep1_info = "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + twitters[0] + " Funded By: " + @top_donors[0]
+	else
+		@rep1_info = "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " Funded By: " + @top_donors[0]
+	end
 
-	@rep2_info = "Sen. " + names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " " + twitters[1]
+	if ("@#{@status.user.screen_name}" + " " + "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + twitters[1] + " Funded By: " + @top_donors[1]).length <= 140
 
+		@rep2_info = "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + twitters[1] + " Funded By: " + @top_donors[1]
+	else
+		@rep2_info = "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " Funded By: " + @top_donors[1]
+	end
+	
 end
+
+def donor_info(state, lastname)
+
+	@CID = ""
+	response = RestClient.get("http://www.opensecrets.org/api/?method=getLegislators&id=#{state}&apikey=#{ENV['donor_data_key']}")
+	doc = Nokogiri::XML(response)
+
+	doc.children.children.each do |rep|
+
+		if rep.attributes["lastname"].value == lastname
+			@CID = rep.attributes["cid"].value
+		end
+	end
+
+	donorxml = RestClient.get("http://www.opensecrets.org/api/?method=candContrib&cid=#{@CID}&cycle=2012&apikey=#{ENV['donor_data_key']}")
+	donordoc = Nokogiri::XML(donorxml)
+	top_donor_name = donordoc.children.children.children.first.attributes["org_name"].value
+	top_donor_amount = "$"+donordoc.children.children.children.first.attributes["total"].value
+	@top_donor = top_donor_name + " = " + top_donor_amount
+	@top_donors << @top_donor 
+end
+
 
 main
