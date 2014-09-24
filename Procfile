@@ -1,1 +1,1 @@
-worker: run ruby whosmyrep.rb start
+worker: ruby whosmyrep.rb
