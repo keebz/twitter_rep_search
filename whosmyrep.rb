@@ -8,9 +8,7 @@ Dotenv.load
 Bundler.require(:default)
 
 Dir[File.dirname(__FILE__) + '/lib/*.rb'].each { |file| require file }
-ActiveRecord::Base.establish_connection(YAML::load(File.open('./db/config.yml'))["development"])
-
-DB = PG.connect({:dbname => 'whosmyrep_console_development'})
+ActiveRecord::Base.establish_connection(YAML::load(File.open('./db/config.yml'))["production"])
 
 	CONSUMER_KEY       = ENV['twitter_consumer_key']
 	CONSUMER_SECRET    = ENV['twitter_consumer_secret']
