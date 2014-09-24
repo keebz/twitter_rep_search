@@ -5,3 +5,8 @@ development:
 test:
   adapter: postgresql
   database: whosmyrep_console_test
+
+production:
+  adapter: postgresql
+  database: whosmyrep_console_production
+
