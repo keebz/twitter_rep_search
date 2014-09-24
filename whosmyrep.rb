@@ -29,7 +29,7 @@ def main
 	  puts "ERROR: #{message}"
 	end
 
-	# puts "Tracking...@whosmyrep"
+	puts "Tracking...@whosmyrep"
 	track('@whosmyrep')
 	# rep_search(['wa'])
 	# donor_info('FL')
@@ -55,28 +55,29 @@ def track (term)
 
 		  	@status.hashtags.each do |hash|
 		  		@keywords << hash.attrs[:text].downcase
-	        end
+	      end
 
 			@rep1_info = "Nothing Found! Please use a hashtag followed by your state. Example: #OH or even #ohio."
-			@rep2_info = "Get out and #VOTE! Every election counts and counts on YOU!"
+			@rep2_info = nil
+			@governor = nil
 
 	        rep_search(@keywords)
 
         	response1 = "@#{@status.user.screen_name}" + " " + @rep1_info
-
-        	response2 = "@#{@status.user.screen_name}" + " " + @rep2_info
-
-        	response3 = "@#{@status.user.screen_name}" + " " + @governor
-
         	new_tweet1 = @twitter.update(response1, :in_reply_to_status_id => status.id)
-
-        	new_tweet2 = @twitter.update(response2, :in_reply_to_status_id => status.id)
-
-        	new_tweet3 = @twitter.update(response3, :in_reply_to_status_id => status.id)
-
         	puts new_tweet1.text + "\n\n"
 
-        	puts new_tweet2.text + "\n\n"
+        	if @rep2_info != nil
+        		response2 = "@#{@status.user.screen_name}" + " " + @rep2_info
+        		new_tweet2 = @twitter.update(response2, :in_reply_to_status_id => status.id)
+        		puts new_tweet2.text + "\n\n"
+        	end
+
+        	if @governor != nil
+        		response3 = "@#{@status.user.screen_name}" + " " + @governor
+        		new_tweet3 = @twitter.update(response3, :in_reply_to_status_id => status.id)
+        		puts new_tweet3.text + "\n\n"
+        	end
 
         	puts "@" + (Time.now).to_s + "\n\n"
 
@@ -116,11 +117,10 @@ def build_rep(rep_hash)
 
 		      elsif office["name"] == "Governor"
 	       		id = office["official_ids"].join.downcase
-	       		@governor = ""
 	       		name = ""
 	       		party = ""
-	       		phone = "Ph:Unlisted"
-	       		email = "Em:Unlisted"
+	       		phone = "Phone:Unlisted"
+	       		email = "Email:Unlisted"
 	       		url = "URL:Unlisted"
 
 							name = rep_hash["officials"][id]["name"]
@@ -128,7 +128,7 @@ def build_rep(rep_hash)
 							if rep_hash["officials"][id]["phones"]
 								phone = rep_hash["officials"][id]["phones"].first
 							end
-
+							binding.pry
 							if rep_hash["officials"][id]["emails"]
 								email = rep_hash["officials"][id]["emails"].first
 							end
@@ -184,19 +184,9 @@ def build_rep(rep_hash)
 
 	end
 
-	# if ("@#{@status.user.screen_name}" + " " + "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + twitters[0] + " Funded By: " + @top_donors[0]).length <= 140
-
 		@rep1_info = "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " Funded By: " + @top_donors[0]
-	# else
-	# 	@rep1_info = "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " Funded By: " + @top_donors[0]
-	# end
-
-	# if ("@#{@status.user.screen_name}" + " " + "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + twitters[1] + " Funded By: " + @top_donors[1]).length <= 140
 
 		@rep2_info = "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " Funded By: " + @top_donors[1]
-	# else
-	# 	@rep2_info = "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " Funded By: " + @top_donors[1]
-	# end
 
 end
 
