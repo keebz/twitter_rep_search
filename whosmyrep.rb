@@ -31,8 +31,8 @@ def main
 	end
 
 	puts "Tracking...@whosmyrep"
-	track('@whosmyrep')
-	# rep_search(['me'])
+	# track('@whosmyrep')
+	rep_search(['mt'])
 	# donor_info('FL')
 end
 
@@ -166,14 +166,16 @@ def build_rep(rep_hash)
 
 	  if rep_hash["officials"][id]["emails"] != nil
 	  	emails << rep_hash["officials"][id]["emails"].first
-	  else
+	  elsif rep_hash["officials"][id]["urls"] !=nil
 	  	emails << rep_hash["officials"][id]["urls"].first
+	  else
+	  	emails << " UNLISTED Email"
 	  end
 
 	  if rep_hash["officials"][id]["phones"] != nil
 	  	phones << rep_hash["officials"][id]["phones"].first
 	  else
-	  	phones << rep_hash["officials"][id]["urls"].first
+	  	phones << "UNLISTED Phone"
 	  end
 
 	  if rep_hash["officials"][id]["channels"].find { |t| t["type"] == "Twitter"} != nil
@@ -189,7 +191,7 @@ def build_rep(rep_hash)
 		@rep1_info = "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " Funded By: " + @top_donors[0]
 
 		@rep2_info = "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " Funded By: " + @top_donors[1]
-
+		binding.pry
 end
 
 def donor_info(state, lastname)
