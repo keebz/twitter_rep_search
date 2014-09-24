@@ -191,7 +191,7 @@ def build_rep(rep_hash)
 		@rep1_info = "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " Funded By: " + @top_donors[0]
 
 		@rep2_info = "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " Funded By: " + @top_donors[1]
-		binding.pry
+
 end
 
 def donor_info(state, lastname)
