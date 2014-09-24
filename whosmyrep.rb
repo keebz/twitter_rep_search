@@ -20,10 +20,10 @@ DB = PG.connect({:dbname => 'whosmyrep_console_development'})
 
 
 	TweetStream.configure do |config|
-	  config.consumer_key       = CONSUMER_KEY       
-	  config.consumer_secret    = CONSUMER_SECRET    
-	  config.oauth_token        = OAUTH_TOKEN        
-	  config.oauth_token_secret = OAUTH_TOKEN_SECRET 
+	  config.consumer_key       = CONSUMER_KEY
+	  config.consumer_secret    = CONSUMER_SECRET
+	  config.oauth_token        = OAUTH_TOKEN
+	  config.oauth_token_secret = OAUTH_TOKEN_SECRET
 	  config.auth_method        = :oauth
 	end
 
@@ -59,26 +59,26 @@ def track (term)
 			@keywords = []
 
 		  	@status.hashtags.each do |hash|
-		  		@keywords << hash.attrs[:text].downcase 
+		  		@keywords << hash.attrs[:text].downcase
 	        end
-			
+
 			@rep1_info = "Nothing Found! Please use a hashtag followed by your state. Example: #OH or even #ohio."
 			@rep2_info = "Get out and #VOTE! Every election counts and counts on YOU!"
 
 	        rep_search(@keywords)
-        	
+
         	response1 = "@#{@status.user.screen_name}" + " " + @rep1_info
-        	
+
         	scrub_reply(response1)
 
         	response2 = "@#{@status.user.screen_name}" + " " +@rep2_info
-        	
+
         	scrub_reply(response2)
-        	
+
         	new_tweet1 = @twitter.update(response1, :in_reply_to_status_id => status.id)
 
         	new_tweet2 = @twitter.update(response2, :in_reply_to_status_id => status.id)
-        	
+
         	puts new_tweet1.text + "\n\n"
 
         	puts new_tweet2.text + "\n\n"
@@ -86,8 +86,8 @@ def track (term)
         	puts "@" + (Time.now).to_s + "\n\n"
 
         	add_reply(new_tweet1.id, response1.to_s)
-			
-			add_reply(new_tweet2.id, response2.to_s)           
+
+					add_reply(new_tweet2.id, response2.to_s)
        	end
 	end
 end
@@ -100,7 +100,7 @@ def scrub_reply (response)
 	if Reply.find_by(message: response)
 		duplicate = Reply.find_by(message: response)
 		@twitter.destroy_status(duplicate.reply_id.to_i)
-		duplicate.destroy 
+		duplicate.destroy
 	end
 end
 
@@ -112,7 +112,7 @@ def rep_search(keywords)
 			build_rep(@civicaide.representatives.at(keyword))
 			break
 		rescue
-			
+
 		end
 	end
 end
@@ -128,17 +128,17 @@ def build_rep(rep_hash)
 	@top_donors = []
 
 	rep_hash["offices"].each do |office_tag|
-	    office_tag.each do |office|  
-	        if office["name"] == "United States Senate"    
+	    office_tag.each do |office|
+	        if office["name"] == "United States Senate"
 	           office["official_ids"].each do |id|
-	           rep_ids << id
-		       end  
-		    end  
-	    end  
-	end  
+	           		rep_ids << id
+		       	 end
+		    	end
+	    end
+	end
 
 	rep_ids.each do |id|
-	  id.downcase! 
+	  id.downcase!
 
 	  rep_name = rep_hash["officials"][id]["name"]
 	  lastname = rep_name.split.last.upcase
@@ -146,8 +146,8 @@ def build_rep(rep_hash)
 	  donor_info(@state, lastname)
 
 	  @names << rep_name
-		
-	  
+
+
 	  if rep_hash["officials"][id]["party"] == "Democratic"
 	  	parties << "D "
 	  elsif rep_hash["officials"][id]["party"] == "Republican"
@@ -169,29 +169,29 @@ def build_rep(rep_hash)
 	  end
 
 	  if rep_hash["officials"][id]["channels"].find { |t| t["type"] == "Twitter"} != nil
-		
+
 		twitters << "@" + rep_hash["officials"][id]["channels"].find { |t| t["type"] == "Twitter"} ["id"]
-	  
+
 	  else
-	  	twitters << "#VOTE" 
+	  	twitters << "#VOTE"
 	  end
-  	    	    
-	end 
+
+	end
 
 	if ("@#{@status.user.screen_name}" + " " + "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + twitters[0] + " Funded By: " + @top_donors[0]).length <= 140
 
-		@rep1_info = "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " " + twitters[0] + " Funded By: " + @top_donors[0]
+		@rep1_info = "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " Funded By: " + @top_donors[0]
 	else
 		@rep1_info = "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " Funded By: " + @top_donors[0]
 	end
 
 	if ("@#{@status.user.screen_name}" + " " + "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + twitters[1] + " Funded By: " + @top_donors[1]).length <= 140
 
-		@rep2_info = "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " " + twitters[1] + " Funded By: " + @top_donors[1]
+		@rep2_info = "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " Funded By: " + @top_donors[1]
 	else
 		@rep2_info = "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " Funded By: " + @top_donors[1]
 	end
-	
+
 end
 
 def donor_info(state, lastname)
@@ -212,7 +212,7 @@ def donor_info(state, lastname)
 	top_donor_name = donordoc.children.children.children.first.attributes["org_name"].value
 	top_donor_amount = "$"+donordoc.children.children.children.first.attributes["total"].value
 	@top_donor = top_donor_name + " = " + top_donor_amount
-	@top_donors << @top_donor 
+	@top_donors << @top_donor
 end
 
 

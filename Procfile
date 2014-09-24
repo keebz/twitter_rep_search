@@ -1,1 +1,1 @@
-bot: bundle exec ruby whosmyrep.rb
+worker: run ruby whosmyrep.rb start
