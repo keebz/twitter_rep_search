@@ -31,8 +31,8 @@ def main
 	end
 
 	puts "Tracking...@whosmyrep"
-	# track('@whosmyrep')
-	rep_search(['me'])
+	track('@whosmyrep')
+	# rep_search(['me'])
 	# donor_info('FL')
 end
 
