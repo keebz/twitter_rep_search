@@ -157,11 +157,11 @@ def build_rep(rep_hash)
 	  @names << rep_name
 
 	  if rep_hash["officials"][id]["party"] == "Democratic"
-	  	parties << "D "
+	  	parties << "(D) "
 	  elsif rep_hash["officials"][id]["party"] == "Republican"
-	  	parties << "R "
+	  	parties << "(R) "
 	  else
-	  	parties << "I "
+	  	parties << "(I) "
 	  end
 
 	  if rep_hash["officials"][id]["emails"] != nil
