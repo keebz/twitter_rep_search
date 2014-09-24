@@ -12,3 +12,4 @@ gem 'civic_aide'
 gem 'opensecrets'
 gem 'rest_client'
 gem 'nokogiri'
+gem "foreman"
