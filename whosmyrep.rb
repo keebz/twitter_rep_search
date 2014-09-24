@@ -7,8 +7,8 @@ Dotenv.load
 
 Bundler.require(:default)
 
-Dir[File.dirname(__FILE__) + '/lib/*.rb'].each { |file| require file }
-ActiveRecord::Base.establish_connection(YAML::load(File.open('./db/config.yml'))["production"])
+# Dir[File.dirname(__FILE__) + '/lib/*.rb'].each { |file| require file }
+# ActiveRecord::Base.establish_connection(YAML::load(File.open('./db/config.yml'))["production"])
 
 	CONSUMER_KEY       = ENV['twitter_consumer_key']
 	CONSUMER_SECRET    = ENV['twitter_consumer_secret']
@@ -67,11 +67,11 @@ def track (term)
 
         	response1 = "@#{@status.user.screen_name}" + " " + @rep1_info
 
-        	scrub_reply(response1)
+        	# scrub_reply(response1)
 
         	response2 = "@#{@status.user.screen_name}" + " " +@rep2_info
 
-        	scrub_reply(response2)
+        	# scrub_reply(response2)
 
         	new_tweet1 = @twitter.update(response1, :in_reply_to_status_id => status.id)
 
@@ -83,24 +83,24 @@ def track (term)
 
         	puts "@" + (Time.now).to_s + "\n\n"
 
-        	add_reply(new_tweet1.id, response1.to_s)
+        	# add_reply(new_tweet1.id, response1.to_s)
 
-					add_reply(new_tweet2.id, response2.to_s)
+					# add_reply(new_tweet2.id, response2.to_s)
        	end
 	end
 end
 
-def add_reply(id, message)
-	Reply.create(reply_id: id, message: message)
-end
+# def add_reply(id, message)
+# 	Reply.create(reply_id: id, message: message)
+# end
 
-def scrub_reply (response)
-	if Reply.find_by(message: response)
-		duplicate = Reply.find_by(message: response)
-		@twitter.destroy_status(duplicate.reply_id.to_i)
-		duplicate.destroy
-	end
-end
+# def scrub_reply (response)
+# 	if Reply.find_by(message: response)
+# 		duplicate = Reply.find_by(message: response)
+# 		@twitter.destroy_status(duplicate.reply_id.to_i)
+# 		duplicate.destroy
+# 	end
+# end
 
 def rep_search(keywords)
 	@civicaide = CivicAide::Client.new(GOOGLE_API_KEY)
