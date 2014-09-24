@@ -30,8 +30,8 @@ def main
 	end
 
 	# puts "Tracking...@whosmyrep"
-	track('@whosmyrep')
-	# rep_search(['AK'])
+	# track('@whosmyrep')
+	rep_search(['wa'])
 	# donor_info('FL')
 end
 
@@ -116,12 +116,24 @@ def build_rep(rep_hash)
 
 		      elsif office["name"] == "Governor"
 	       		id = office["official_ids"].join.downcase
-	       		@governor = "Gov " +
-	       								rep_hash["officials"][id]["name"] + " " +
-	       								rep_hash["officials"][id]["party"] + " " +
-	       								rep_hash["officials"][id]["phones"].first + " " +
-	       								rep_hash["officials"][id]["emails"].first + " " +
-	       								rep_hash["officials"][id]["urls"].first
+	       		name = ""
+	       		party = ""
+	       		phone = "Ph:Unlisted"
+	       		email = "Em:Unlisted"
+	       		url = "URL:Unlisted"
+	       		@governor = "Gov " + name + " " + party + " " + phone + " " + email + " " + url
+
+							name = rep_hash["officials"][id]["name"]
+							party = rep_hash["officials"][id]["party"]
+							if rep_hash["officials"][id]["phones"].first
+								phone = rep_hash["officials"][id]["phones"].first
+							end
+							if rep_hash["officials"][id]["emails"].first
+								email = rep_hash["officials"][id]["emails"].first
+							end
+							if rep_hash["officials"][id]["urls"].first
+								url = rep_hash["officials"][id]["urls"].first
+							end
 		    	end
 	    end
 	end
