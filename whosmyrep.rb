@@ -66,7 +66,7 @@ def track (term)
 
         	response2 = "@#{@status.user.screen_name}" + " " + @rep2_info
 
-        	response3 = "@#{@status.user.screen_name}" + " " + @@governor
+        	response3 = "@#{@status.user.screen_name}" + " " + @governor
 
         	new_tweet1 = @twitter.update(response1, :in_reply_to_status_id => status.id)
 
