@@ -7,9 +7,6 @@ Dotenv.load
 
 Bundler.require(:default)
 
-# Dir[File.dirname(__FILE__) + '/lib/*.rb'].each { |file| require file }
-# ActiveRecord::Base.establish_connection(YAML::load(File.open('./db/config.yml'))["production"])
-
 	CONSUMER_KEY       = ENV['twitter_consumer_key']
 	CONSUMER_SECRET    = ENV['twitter_consumer_secret']
 	OAUTH_TOKEN        = ENV['twitter_oauth_token']
@@ -32,7 +29,7 @@ def main
 	  puts "ERROR: #{message}"
 	end
 
-	puts "Tracking...@whosmyrep"
+	# puts "Tracking...@whosmyrep"
 	track('@whosmyrep')
 	# rep_search(['AK'])
 	# donor_info('FL')
@@ -67,15 +64,15 @@ def track (term)
 
         	response1 = "@#{@status.user.screen_name}" + " " + @rep1_info
 
-        	# scrub_reply(response1)
+        	response2 = "@#{@status.user.screen_name}" + " " + @rep2_info
 
-        	response2 = "@#{@status.user.screen_name}" + " " +@rep2_info
-
-        	# scrub_reply(response2)
+        	response3 = "@#{@status.user.screen_name}" + " " + @@governor
 
         	new_tweet1 = @twitter.update(response1, :in_reply_to_status_id => status.id)
 
         	new_tweet2 = @twitter.update(response2, :in_reply_to_status_id => status.id)
+
+        	new_tweet3 = @twitter.update(response3, :in_reply_to_status_id => status.id)
 
         	puts new_tweet1.text + "\n\n"
 
@@ -83,24 +80,9 @@ def track (term)
 
         	puts "@" + (Time.now).to_s + "\n\n"
 
-        	# add_reply(new_tweet1.id, response1.to_s)
-
-					# add_reply(new_tweet2.id, response2.to_s)
        	end
 	end
 end
-
-# def add_reply(id, message)
-# 	Reply.create(reply_id: id, message: message)
-# end
-
-# def scrub_reply (response)
-# 	if Reply.find_by(message: response)
-# 		duplicate = Reply.find_by(message: response)
-# 		@twitter.destroy_status(duplicate.reply_id.to_i)
-# 		duplicate.destroy
-# 	end
-# end
 
 def rep_search(keywords)
 	@civicaide = CivicAide::Client.new(GOOGLE_API_KEY)
@@ -128,9 +110,18 @@ def build_rep(rep_hash)
 	rep_hash["offices"].each do |office_tag|
 	    office_tag.each do |office|
 	        if office["name"] == "United States Senate"
-	           office["official_ids"].each do |id|
-	           		rep_ids << id
-		       	 end
+           office["official_ids"].each do |id|
+           		rep_ids << id
+	       	 end
+
+		      elsif office["name"] == "Governor"
+	       		id = office["official_ids"].join.downcase
+	       		@governor = "Gov " +
+	       								rep_hash["officials"][id]["name"] + " " +
+	       								rep_hash["officials"][id]["party"] + " " +
+	       								rep_hash["officials"][id]["phones"].first + " " +
+	       								rep_hash["officials"][id]["emails"].first + " " +
+	       								rep_hash["officials"][id]["urls"].first
 		    	end
 	    end
 	end
@@ -176,19 +167,19 @@ def build_rep(rep_hash)
 
 	end
 
-	if ("@#{@status.user.screen_name}" + " " + "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + twitters[0] + " Funded By: " + @top_donors[0]).length <= 140
+	# if ("@#{@status.user.screen_name}" + " " + "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + twitters[0] + " Funded By: " + @top_donors[0]).length <= 140
 
 		@rep1_info = "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " Funded By: " + @top_donors[0]
-	else
-		@rep1_info = "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " Funded By: " + @top_donors[0]
-	end
+	# else
+	# 	@rep1_info = "Sen. " + @names[0] + " " + parties[0] + emails[0] + " " + phones[0] + " Funded By: " + @top_donors[0]
+	# end
 
-	if ("@#{@status.user.screen_name}" + " " + "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + twitters[1] + " Funded By: " + @top_donors[1]).length <= 140
+	# if ("@#{@status.user.screen_name}" + " " + "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + twitters[1] + " Funded By: " + @top_donors[1]).length <= 140
 
 		@rep2_info = "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " Funded By: " + @top_donors[1]
-	else
-		@rep2_info = "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " Funded By: " + @top_donors[1]
-	end
+	# else
+	# 	@rep2_info = "Sen. " + @names[1] + " " + parties[1] + emails[1] + " " + phones[1] + " Funded By: " + @top_donors[1]
+	# end
 
 end
 
