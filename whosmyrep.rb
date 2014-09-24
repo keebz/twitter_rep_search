@@ -30,8 +30,8 @@ def main
 	end
 
 	# puts "Tracking...@whosmyrep"
-	# track('@whosmyrep')
-	rep_search(['wa'])
+	track('@whosmyrep')
+	# rep_search(['wa'])
 	# donor_info('FL')
 end
 
@@ -121,7 +121,6 @@ def build_rep(rep_hash)
 	       		phone = "Ph:Unlisted"
 	       		email = "Em:Unlisted"
 	       		url = "URL:Unlisted"
-	       		@governor = "Gov " + name + " " + party + " " + phone + " " + email + " " + url
 
 							name = rep_hash["officials"][id]["name"]
 							party = rep_hash["officials"][id]["party"]
@@ -134,6 +133,8 @@ def build_rep(rep_hash)
 							if rep_hash["officials"][id]["urls"].first
 								url = rep_hash["officials"][id]["urls"].first
 							end
+
+	       		@governor = "Gov " + name + " " + party + " " + phone + " " + email + " " + url
 		    	end
 	    end
 	end
