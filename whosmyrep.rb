@@ -116,6 +116,7 @@ def build_rep(rep_hash)
 
 		      elsif office["name"] == "Governor"
 	       		id = office["official_ids"].join.downcase
+	       		@governor = ""
 	       		name = ""
 	       		party = ""
 	       		phone = "Ph:Unlisted"
@@ -124,17 +125,20 @@ def build_rep(rep_hash)
 
 							name = rep_hash["officials"][id]["name"]
 							party = rep_hash["officials"][id]["party"]
-							if rep_hash["officials"][id]["phones"].first
+							if rep_hash["officials"][id]["phones"]
 								phone = rep_hash["officials"][id]["phones"].first
 							end
-							if rep_hash["officials"][id]["emails"].first
+
+							if rep_hash["officials"][id]["emails"]
 								email = rep_hash["officials"][id]["emails"].first
 							end
-							if rep_hash["officials"][id]["urls"].first
+
+							if rep_hash["officials"][id]["urls"]
 								url = rep_hash["officials"][id]["urls"].first
 							end
 
-	       		@governor = "Gov " + name + " " + party + " " + phone + " " + email + " " + url
+	       		@governor = "Gov. " + name + " " + party + " " + phone + " " + email + " " + url
+
 		    	end
 	    end
 	end
