@@ -87,6 +87,7 @@ GEM
     opensecrets (0.0.5)
       crack (>= 0.1.4)
       httparty (>= 0.4.5)
+    people (0.2.1)
     pg (0.17.1)
     pry (0.10.1)
       coderay (~> 1.1.0)
@@ -139,6 +140,7 @@ DEPENDENCIES
   foreman
   nokogiri
   opensecrets
+  people
   pg
   pry
   rake

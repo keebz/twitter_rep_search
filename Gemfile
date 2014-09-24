@@ -13,3 +13,4 @@ gem 'opensecrets'
 gem 'rest_client'
 gem 'nokogiri'
 gem "foreman"
+gem 'people'

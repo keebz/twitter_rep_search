@@ -2,6 +2,7 @@ require 'bundler/setup'
 require 'dotenv'
 require 'rest_client'
 require 'nokogiri'
+require 'people'
 
 Dotenv.load
 
@@ -30,8 +31,8 @@ def main
 	end
 
 	puts "Tracking...@whosmyrep"
-	track('@whosmyrep')
-	# rep_search(['wa'])
+	# track('@whosmyrep')
+	rep_search(['me'])
 	# donor_info('FL')
 end
 
@@ -128,7 +129,7 @@ def build_rep(rep_hash)
 							if rep_hash["officials"][id]["phones"]
 								phone = rep_hash["officials"][id]["phones"].first
 							end
-							binding.pry
+
 							if rep_hash["officials"][id]["emails"]
 								email = rep_hash["officials"][id]["emails"].first
 							end
@@ -146,13 +147,14 @@ def build_rep(rep_hash)
 	rep_ids.each do |id|
 	  id.downcase!
 
+	  np = People::NameParser.new
 	  rep_name = rep_hash["officials"][id]["name"]
-	  lastname = rep_name.split.last.upcase
+	  name = np.parse(rep_name)
+	  lastname = name[:last].upcase!
 
 	  donor_info(@state, lastname)
 
 	  @names << rep_name
-
 
 	  if rep_hash["officials"][id]["party"] == "Democratic"
 	  	parties << "D "
